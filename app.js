@@ -25,7 +25,7 @@ app.use(methodOverride('_method'));
 app.use(express.urlencoded({ extended: true }))
 // To parse incoming JSON in POST request body:
 app.use(express.json())
-//To use ejd boilerplate
+//To use EJS template engine
 app.engine('ejs',ejsMate);
 
 // *********************************************
