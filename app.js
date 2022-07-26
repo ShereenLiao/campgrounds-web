@@ -3,21 +3,22 @@ const app = express();
 const path = require('path');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
-const Campground = require('./models/campground')
-const Review=require('./models/review')
 const { v4: uuid } = require('uuid'); //For generating unique ID's
 const ejsMate = require('ejs-mate');
-const session=require('express-session');
+const session = require('express-session');
 const flash = require('connect-flash');
 const { nextTick } = require('process');
-const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
-const Joi = require('joi');//For define schema and validate input data
 const { join } = require('path');
-const {campgroundSchema, reviewSchema}=require('./schema.js');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const User = require('./models/user');
 
-const campgrounds=require('./routes/campgrounds');
-const reviews=require('./routes/reviews');
+//Split the routes: campgrounds, reviews, users
+const campgroundRoutes = require('./routes/campgrounds');
+const reviewRoutes = require('./routes/reviews');
+const userRoutes = require('./routes/users');
+
 
 //use camp database, default port: 27017
 //Mongoose 6 always behaves as if useNewUrlParser , useUnifiedTopology , and useCreateIndex are true , and useFindAndModify is false .
@@ -26,8 +27,9 @@ mongoose.connect('mongodb://localhost:27017/yelp-camp');
 //Connect to yelp-camp in Mongodb using localhost on port 27017. 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true,
-    // useCreateIndex: true,
-    useUnifiedTopology: true
+    useCreateIndex: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false
 });
 const db = mongoose.connection;
 
@@ -50,7 +52,7 @@ app.use(express.urlencoded({ extended: true }))
 // To parse incoming JSON in POST request body:
 app.use(express.json())
 //To specifies the root directory from which to serve static assets.
-app.use(express.static(path.join(__dirname,'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const sessionConfig = {
     secret: 'thisshouldbeabettersecret!',
@@ -63,20 +65,33 @@ const sessionConfig = {
     }
 }
 app.use(session(sessionConfig));
-
 //To use flash to store message
 app.use(flash());
 
+//To use passport for authentication
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));// use static authenticate method of model in LocalStrategy
+
+// use static serialize and deserialize of model for passport session support
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+//Apply the middleware to send the success and error message 
 app.use((req, res, next) => {
+    console.log(req.session);
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
+    res.locals.currentUser = req.user;
     next();
 });
 
+//Use the routes: campgrounds, reviews, users
+app.use('/', userRoutes);
+app.use('/campgrounds', campgroundRoutes);
+app.use('/campgrounds/:id/reviews', reviewRoutes);
 
-//Separate the routes
-app.use('/campgrounds',campgrounds);
-app.use('/campgrounds/:id/reviews',reviews);
 
 // *********************************************
 // Root - renders the home page

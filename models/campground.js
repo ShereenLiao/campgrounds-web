@@ -8,7 +8,11 @@ const CampgoundSchema = new Schema({
     price: Number,
     description: String,
     location: String,
-    reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }]
+    reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
 });
 
 // DELETE ALL ASSOCIATED PRODUCTS AFTER A FARM IS DELETED
