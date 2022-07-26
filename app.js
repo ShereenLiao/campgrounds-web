@@ -4,6 +4,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const Campground = require('./models/campground')
+const Review=require('./models/review')
 const { v4: uuid } = require('uuid'); //For generating unique ID's
 const ejsMate = require('ejs-mate');
 const { nextTick } = require('process');
@@ -11,11 +12,12 @@ const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const Joi = require('joi');//For define schema and validate input data
 const { join } = require('path');
-const {campgroundSchema}=require('./schema.js');
+const {campgroundSchema, reviewSchema}=require('./schema.js');
 //use camp database, default port: 27017
 //Mongoose 6 always behaves as if useNewUrlParser , useUnifiedTopology , and useCreateIndex are true , and useFindAndModify is false .
 mongoose.connect('mongodb://localhost:27017/yelp-camp');
 
+//Connect to yelp-camp in Mongodb using localhost on port 27017. 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true,
     // useCreateIndex: true,
@@ -52,12 +54,25 @@ const validateCampground=(req,res,next)=>{
     }
 }
 
+//Validate the req.body.review
+const validateReview=(req,res,next)=>{
+    const { error } = reviewSchema.validate(req.body);
+    if(error){
+        const msg=error.details.map(el=>el.message).join(',');
+        throw new ExpressError(msg,400);
+    }
+    else{
+        next();
+    }
+}
+
 // *********************************************
 // Root - renders the home page
 // *********************************************
 app.get('/', (req, res) => {
     res.render('home')
 });
+
 // *********************************************
 // INDEX - renders multiple campgrounds
 // *********************************************
@@ -65,20 +80,23 @@ app.get('/campgrounds', catchAsync(async (req, res) => {
     const campgrounds = await Campground.find({});
     res.render('campgrounds/index', { campgrounds })
 }));
+
 // **********************************************
 // NEW - renders a form
 // **********************************************
 app.get('/campgrounds/new', catchAsync(async (req, res) => {
     res.render('campgrounds/new');
 }));
+
 // ***********************************************
 // SHOW - details about one particular campground
 // ***********************************************
 app.get('/campgrounds/:id', catchAsync(async (req, res,) => {
-    const campground = await Campground.findById(req.params.id)
+    const campground = await Campground.findById(req.params.id).populate('reviews');
     console.log(campground);
     res.render('campgrounds/show', { campground });
 }));
+
 // **********************************************
 // CREATE - creates a new campground
 // **********************************************
@@ -88,6 +106,7 @@ app.post('/campgrounds', validateCampground, catchAsync(async (req, res, next) =
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`)
 }));
+
 // ***********************************************
 // EDIT - renders a form to edit a campground
 // ***********************************************
@@ -95,6 +114,7 @@ app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id)
     res.render('campgrounds/edit', { campground });
 }));
+
 // ***********************************************
 // UPDATE - updates a particular campground
 // ***********************************************
@@ -103,6 +123,7 @@ app.put('/campgrounds/:id', catchAsync(async (req, res) => {
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
     res.redirect(`/campgrounds/${campground._id}`)
 }));
+
 // ***********************************************
 // DELETE/DESTROY- removes a single campground
 // ***********************************************
@@ -111,6 +132,29 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
 }));
+
+// **********************************************
+// CREATE - creates a new review
+// **********************************************
+app.post('/campgrounds/:id/reviews',validateReview,catchAsync(async(req,res,next)=>{
+    const campground = await Campground.findById(req.params.id);
+    const review=new Review(req.body.review);
+    campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
+}))
+
+// ***********************************************
+// DELETE/DESTROY- removes a single review
+// ***********************************************
+app.delete('/campgrounds/:id/reviews/:reviewId', catchAsync(async (req, res) => {
+    const { id,reviewId } = req.params;
+    await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/campgrounds/${id}`);
+}));
+
 // ***********************************************
 // Error Handler- browse route that not exists
 // ***********************************************

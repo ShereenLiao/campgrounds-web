@@ -25,3 +25,7 @@ npm i express mongoose ejs method-override uuid
 |`GET`|`/customers?nickname=<string:nickname>`|List customers by nickname|'nickname': string|200 Status Code|
 |`PUT`|`/customers/<int:customer_id>/activate`|Active a customer|--|204 Status Code|
 |`DELETE`|`/customers/<int:customer_id>/deactivate`|Deactive a customer|--|204 Status Code|
+
+
+POST /campgrounds/:id/reviews
+
