@@ -15,33 +15,42 @@ db.once("open", () => {
     console.log("Database connected");
 });
 
-const seedUser=async()=>{
+const seedUser = async () => {
     await User.deleteMany({});
-    const user=new User({
-        email:'sherry@gmail.com',
-        username:'sherry'
+    const user = new User({
+        email: 'sherry@gmail.com',
+        username: 'sherry'
     });
-    const registereduser=await User.register(user, 'password');
+    const registereduser = await User.register(user, 'password');
     return registereduser;
 }
 
 const sample = array => array[Math.floor(Math.random() * array.length)];
 //generate 100 campground using random number
 const seedDB = async () => {
-    const user=seedUser();
+    const user = seedUser();
     await Campground.deleteMany({});
     for (let i = 0; i < 100; i++) {
         //Create random campground info
         const random1000 = Math.floor(Math.random() * 1000);
-        const price=Math.floor(Math.random()*20)+10;
+        const price = Math.floor(Math.random() * 20) + 10;
         const camp = new Campground({
-            author:(await user)._id,
+            author: (await user)._id,
             location: `${cities[random1000].city}, ${cities[random1000].state}`,
             title: `${sample(descriptors)} ${sample(places)}`,
-            image: 'https://source.unsplash.com/collection/483251',
+            images: [
+                {
+                    url: 'https://res.cloudinary.com/sherry-camp/image/upload/v1658894337/xyovnitbshniuydkm4sq.webp',
+                    filename: 'xyovnitbshniuydkm4sq'
+                },
+                {
+                    url: 'https://res.cloudinary.com/sherry-camp/image/upload/v1658894338/rffiny4hjxqv6bumamvx.jpg',
+                    filename: 'rffiny4hjxqv6bumamvx'
+                }
+            ],
             description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores vero perferendis laudantium, consequuntur voluptatibus nulla architecto, sit soluta esse iure sed labore ipsam a cum nihil atque molestiae deserunt!',
-            price:price,
-            
+            price: price,
+
         })
         await camp.save();
     }

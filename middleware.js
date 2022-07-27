@@ -33,7 +33,23 @@ module.exports.isReviewAuthor = async (req, res, next) => {
 }
 
 //Validate the req.body.camp
-module.exports.validateCampground = (req, res, next) => {
+module.exports.validateCampground = async (req, res, next) => {
+    const { id } = req.params;
+    const campground=await Campground.findById(id);
+    if(req.body.deleteImages){
+        const deleteNum = req.body.deleteImages.length;
+        if(req.files>0){
+            const addNum=req.files.length;
+            if(campground.images.length+addNum-deleteNum<=0){
+                req.flash('error', 'At least one image.');
+                return res.redirect(`/campgrounds/${id}`);
+            }
+        }
+        else if(campground.images.length===deleteNum){
+            req.flash('error', 'At least one image.');
+            return res.redirect(`/campgrounds/${id}`);
+        }
+    }
     const { error } = campgroundSchema.validate(req.body);
     if (error) {
         const msg = error.details.map(el => el.message).join(',');
@@ -43,7 +59,6 @@ module.exports.validateCampground = (req, res, next) => {
         next();
     }
 }
-
 //Validate the req.body.review
 module.exports.validateReview = (req, res, next) => {
     const { error } = reviewSchema.validate(req.body);
