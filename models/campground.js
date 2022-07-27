@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const Review= require('./review');
+const Review = require('./review');
+
+//Virtuals will not be included by default.
+// To include virtuals in res.json(), you need to set the toJSON schema option to { virtuals: true }.
+const opts = { toJSON: { virtuals: true } };
 
 const ImageSchema = new Schema({
     url: String,
@@ -11,9 +15,12 @@ ImageSchema.virtual('thumbnail').get(function () {
     return this.url.replace('/upload', '/upload/w_200');
 });
 
+
+
 const CampgoundSchema = new Schema({
     title: String,
     images: [ImageSchema],
+    description: String,
     price: Number,
     geometry: {
         type: {
@@ -32,6 +39,13 @@ const CampgoundSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     }
+},opts); 
+
+//To create virtual properties for geoJSON map
+CampgoundSchema.virtual('properties.popUpMarkup').get(function () {
+    return `
+    <strong><a href="/campgrounds/${this._id}">${this.title}</a></strong>
+    <p>${this.description.substring(0, 20)}...</p>`;
 });
 
 // DELETE ALL ASSOCIATED PRODUCTS AFTER A FARM IS DELETED
