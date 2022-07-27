@@ -15,7 +15,17 @@ const CampgoundSchema = new Schema({
     title: String,
     images: [ImageSchema],
     price: Number,
-    description: String,
+    geometry: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            required: true
+        },
+        coordinates: {
+            type: [Number],
+            required: true
+        }
+    },
     location: String,
     reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
     author: {
