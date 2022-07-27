@@ -8,19 +8,7 @@ const { campgroundSchema } = require('../schema.js');
 
 const ExpressError = require('../utils/ExpressError');
 const catchAsync = require('../utils/catchAsync');
-const { isLoggedIn,isAuthor} = require('../middleware');
-
-//Validate the req.body.camp
-const validateCampground = (req, res, next) => {
-    const { error } = campgroundSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    }
-    else {
-        next();
-    }
-}
+const { isLoggedIn,isAuthor,validateCampground} = require('../middleware');
 
 // *********************************************
 // INDEX - renders multiple campgrounds
@@ -53,8 +41,13 @@ router.post('/', isLoggedIn, validateCampground, catchAsync(async (req, res, nex
 // SHOW - details about one particular campground
 // ***********************************************
 router.get('/:id', catchAsync(async (req, res,) => {
-    const campground = await Campground.findById(req.params.id).populate('reviews').populate('author');
-    console.log(campground);
+    const campground = await Campground.findById(req.params.id).populate({
+        path: 'reviews',
+        populate: {
+            path: 'author'
+        }
+    }).populate('author');
+    // console.log(campground);
     if (!campground) {
         req.flash('error', 'Cannot find that campground');
         return res.redirect('/campgrounds');
