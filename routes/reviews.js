@@ -8,7 +8,7 @@ const { reviewSchema } = require('../schema.js');
 
 const ExpressError = require('../utils/ExpressError');
 const catchAsync = require('../utils/catchAsync');
-const isLoggedIn = require('../utils/isLoggedIn');
+const { isLoggedIn,isAuthor} = require('../middleware');
 
 //Validate the req.body.review
 const validateReview = (req, res, next) => {
