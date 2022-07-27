@@ -44,7 +44,7 @@ router.get('/new', isLoggedIn, (req, res) => {
 router.post('/', isLoggedIn, validateCampground, catchAsync(async (req, res, next) => {
     if (!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
     const campground = new Campground(req.body.campground);
-    campground.author=req.user._id;
+    campground.author = req.user._id;
     await campground.save();
     req.flash('success', 'Successfully created a new campground'); //store a flash message if success
     res.redirect(`/campgrounds/${campground._id}`)
@@ -79,11 +79,11 @@ router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
 // ***********************************************
 // UPDATE - updates a particular campground
 // ***********************************************
-router.put('/:id', isLoggedIn, validateCampground,catchAsync(async (req, res) => {
+router.put('/:id', isLoggedIn, validateCampground, catchAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(req.params.id);
-    if (!campground) {
-        req.flash('error', 'Cannot find that campground');
+    if (!campground || campground.author === req.user._id) {
+        req.flash('error', 'You do not have permission to do that!');
         return res.redirect('/campgrounds');
     }
     await Campground.findByIdAndUpdate(id, { ...req.body.campground });
