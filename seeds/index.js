@@ -18,8 +18,8 @@ db.once("open", () => {
 const seedUser=async()=>{
     await User.deleteMany({});
     const user=new User({
-        email:'admin@gmail.com',
-        username:'admin'
+        email:'sherry@gmail.com',
+        username:'sherry'
     });
     const registereduser=await User.register(user, 'password');
     return registereduser;

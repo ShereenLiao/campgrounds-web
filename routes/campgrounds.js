@@ -8,8 +8,8 @@ const { campgroundSchema } = require('../schema.js');
 
 const ExpressError = require('../utils/ExpressError');
 const catchAsync = require('../utils/catchAsync');
-// const isLoggedIn = require('../utils/isLoggedIn');
-const { isLoggedIn } = require('../middleware');
+const isLoggedIn = require('../utils/isLoggedIn');
+// const { isLoggedIn } = require('../middleware');
 
 //Validate the req.body.camp
 const validateCampground = (req, res, next) => {
@@ -44,6 +44,7 @@ router.get('/new', isLoggedIn, (req, res) => {
 router.post('/', isLoggedIn, validateCampground, catchAsync(async (req, res, next) => {
     if (!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
     const campground = new Campground(req.body.campground);
+    campground.author=req.user._id;
     await campground.save();
     req.flash('success', 'Successfully created a new campground'); //store a flash message if success
     res.redirect(`/campgrounds/${campground._id}`)
