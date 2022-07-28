@@ -1,0 +1,42 @@
+<!-- <link rel="stylesheet" href="/stylesheets/searchBar.css"> -->
+
+<div class="d-flex flex-wrap">
+    <h3 class="col-2 mt-3 ml-3 align-self-end">Campgrounds:</h3>
+    <!-- starts of form -->
+    <form class="mt-2" action="/campgrounds?" method="GET" enctype="multipart/form-data">
+
+        <div class="form-row d-flex align-items-center">
+
+            <div class="col-4 ml-3">
+                <label class="form-label" for="title"></label>
+                <input class="form-control" type="text" id="title" name="campground[title]" placeholder="Title"
+                    value="<%=campground.title%>">
+            </div>
+
+            <div class="col-4 ml-3">
+                <label class="form-label" for="location"></label>
+                <input class="form-control" type="text" id="location" name="campground[location]" placeholder="Location"
+                    value="<%=campground.location%>">
+            </div>
+
+            <div class="col-2 ml-3">
+                <label class="form-label" for="price"></label>
+                <div class="input-group">
+                    <span class="input-group-text" id="price-label">$</span>
+                    <input type="text" class="form-control" id="price" placeholder="0.00" aria-label="price"
+                        aria-describedby="price-label" name="campground[price]" placeholder="Price"
+                        value="<%=campground.price%>" </div>
+                </div>
+            </div>
+            <div class="col-2 ml-3 align-self-end">
+                <button type="submit" class="btn" style="background-color:#ddbea9;color:white">
+                    <i class="fa-solid fa-magnifying-glass w-200 h-200 "></i>
+                </button>
+                <a class="btn ml-1 btn-secondary align-self-end" href="/campgrounds" method="GET">Clear</a>
+            </div>
+        </div>
+
+</div>
+</form>
+<!-- starts of form -->
+</div>

@@ -12,11 +12,14 @@
     <!-- GeoBox map -->
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css' rel='stylesheet' />
+    
     <link rel="stylesheet" href="/stylesheets/app.css">
+    <!-- fontawesome -->
+    <script src="https://kit.fontawesome.com/cf4c8d1638.js" crossorigin="anonymous"></script>
 </head>
 
 <body class="d-flex flex-column vh-100">
-    <%-include('../partials/navbar')%>
+    <%-include('../partials/navbar')%> 
         <main class="container mt-5">
             <%- include('../partials/flash')%>
                 <%- body %>

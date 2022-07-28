@@ -1,8 +1,8 @@
 <% layout('layouts/boilerplate')%>
-    <div id="cluster-map">
-    </div>
+    <div id="cluster-map"></div>
+    <%-include('../partials/searchBar')%>    
+    <br>
     <div class="container">
-    <h1 class="mb-3 mt-3"style="color:#735751">All Campgrounds</h1>
     <% for (let campground of campgrounds){%>
         <div class="card mb-3">
             <div class="row">
@@ -28,7 +28,6 @@
                             </small>
                         </p>
                         <a class="btn" href="/campgrounds/<%=campground._id%>">View <%=campground.title%></a>
-                        
                     </div>
                 </div>
             </div>

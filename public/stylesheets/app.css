@@ -18,3 +18,7 @@ a[class='btn'],button[class='btn btn-success']{
 .btn.btn-sm.btn-danger{
     background-color:#bf4342 ;
 }
+
+h3{
+    color:#562c2c;
+}
