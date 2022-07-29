@@ -106,7 +106,8 @@ app.use('/campgrounds/:id/reviews', reviewRoutes);
 // Root - renders the home page
 // *********************************************
 app.get('/', (req, res) => {
-    res.render('home')
+    // res.render('home')
+    res.render('home');
 });
 
 // ***********************************************
