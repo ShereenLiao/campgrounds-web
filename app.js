@@ -24,8 +24,7 @@ const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
 
-// const dbUrl=process.env.DB_URL;
-const dbUrl='mongodb://localhost:27017/yelp-camp';
+const dbUrl=process.env.DB_URL||'mongodb://localhost:27017/yelp-camp';
 const MongoStore = require('connect-mongo');
 
 
@@ -61,11 +60,11 @@ app.use(express.json())
 //To specifies the root directory from which to serve static assets.
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+const secret=process.env.SECRET||'thisshouldbeabettersecret!';
 
 const sessionConfig = {
     store: MongoStore.create({ mongoUrl: dbUrl }),
-    secret: 'thisshouldbeabettersecret!',
+    secret: secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
