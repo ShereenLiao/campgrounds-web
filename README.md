@@ -91,7 +91,7 @@ The project contains the following:
 
 ## Prerequisite Software Installation
 
-This project uses Node.js(7.18.6)to provide a consistent repeatable disposable development environment.
+This project uses Node.js(7.18.6) to provide a consistent repeatable disposable development environment.
 
 You will need the following software installed:
 
