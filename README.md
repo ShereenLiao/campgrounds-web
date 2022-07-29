@@ -116,6 +116,9 @@ $ npm install
 ```
 
 ## Runing the application
+
+You should include your own .env file.
+
 ```bash
 $ node app.js
 ```
