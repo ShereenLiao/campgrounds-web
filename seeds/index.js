@@ -13,7 +13,11 @@ const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapBoxToken = process.env.MAPBOX_TOKEN;
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 
-mongoose.connect('mongodb://localhost:27017/yelp-camp', {
+//For connect to mongocloud
+const dbUrl=process.env.DB_URL||'mongodb://localhost:27017/yelp-camp';
+const MongoStore = require('connect-mongo');
+
+mongoose.connect(dbUrl,{
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
