@@ -24,18 +24,19 @@ const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
 
+const dbUrl=process.env.DB_URL||'mongodb://localhost:27017/yelp-camp';
+const MongoStore = require('connect-mongo');
 
-//use camp database, default port: 27017
-//Mongoose 6 always behaves as if useNewUrlParser , useUnifiedTopology , and useCreateIndex are true , and useFindAndModify is false .
-mongoose.connect('mongodb://localhost:27017/yelp-camp');
 
+//localhost: mongodb://localhost:27017/yelp-camp
 //Connect to yelp-camp in Mongodb using localhost on port 27017. 
-mongoose.connect('mongodb://localhost:27017/yelp-camp', {
+//Mongoose 6 always behaves as if useNewUrlParser , useUnifiedTopology , and useCreateIndex are true , and useFindAndModify is false .
+mongoose.connect(dbUrl,{
     useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false
+    useUnifiedTopology: true
 });
+
+
 const db = mongoose.connection;
 
 db.on("error", console.error.bind(console, "connection error:"));
@@ -59,8 +60,11 @@ app.use(express.json())
 //To specifies the root directory from which to serve static assets.
 app.use(express.static(path.join(__dirname, 'public')));
 
+const secret=process.env.SECRET||'thisshouldbeabettersecret!';
+
 const sessionConfig = {
-    secret: 'thisshouldbeabettersecret!',
+    store: MongoStore.create({ mongoUrl: dbUrl }),
+    secret: secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -69,6 +73,7 @@ const sessionConfig = {
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }
+
 app.use(session(sessionConfig));
 //To use flash to store message
 app.use(flash());
@@ -121,6 +126,8 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render('error', { err })
 })
 
-app.listen(3000, () => {
-    console.log("Listen on port 3000.");
+const port=process.env.PORT||3000;
+
+app.listen(port, () => {
+    console.log(`Listen on port ${port}`);
 })
