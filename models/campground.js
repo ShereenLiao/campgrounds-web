@@ -16,7 +16,6 @@ ImageSchema.virtual('thumbnail').get(function () {
 });
 
 
-
 const CampgoundSchema = new Schema({
     title: String,
     images: [ImageSchema],
@@ -38,7 +37,8 @@ const CampgoundSchema = new Schema({
     author: {
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
+    rooms:[{type: Schema.Types.ObjectId, ref: 'Room'}],
 },opts); 
 
 //To create virtual properties for geoJSON map

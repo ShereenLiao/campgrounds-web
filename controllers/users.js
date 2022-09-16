@@ -31,16 +31,16 @@ module.exports.createUser=async (req, res, next) => {
 // INDEX - renders the login page
 // **********************************************
 module.exports.renderLogin=(req, res) => {
-    console.log('***************************************')
-    console.log('in the login: ',req.session.returnTo)
-    console.log('***************************************')
+    // console.log('***************************************')
+    // console.log('in the login: ',req.session.returnTo)
+    // console.log('***************************************')
     res.render('users/login');
 };
 
 // **********************************************
 // LOGIN - login to the web
 // **********************************************
-module.exports.login= (req, res) => {
+module.exports.login = (req, res) => {
     //set secret source = keepSessionInfo: true, so that one can be redirected to returnTo page
     req.flash('success', 'welcome back!');
     const redirectUrl = req.session.returnTo || '/campgrounds';

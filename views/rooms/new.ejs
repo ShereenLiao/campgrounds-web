@@ -1,0 +1,28 @@
+<% layout('layouts/boilerplate')%>
+<div class="container d-flex justify-content-center align-items-center mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card shadow">
+                    <div class="card-body">
+                    <h5 class="card-title">New Room</h5>
+                    <form action="/campgrounds/<%= campgroundId %>/rooms/new" method="POST" >
+                        <div class="mb-3">
+                            <label class="form-label" for="title">Title</label>
+                            <input class="form-control" type="text" id="title" name="room[title]" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="password">Password</label>
+                            <input class="form-control" type="password" id="password" name="room[password]" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="description">Description</label>
+                            <textarea class="form-control" type="text" id="description" name="room[description]"
+                                required></textarea>
+                        </div>
+                        <button class="btn btn-block  mb-2" style="background-color:#ab8570;color:white">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

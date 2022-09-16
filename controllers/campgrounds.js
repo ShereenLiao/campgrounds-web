@@ -1,6 +1,5 @@
 const Campground = require('../models/campground');
 const { cloudinary } = require("../cloudinary");
-
 //For creating mapbox client
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapBoxToken = process.env.MAPBOX_TOKEN;
@@ -52,11 +51,10 @@ module.exports.createCampground = async (req, res, next) => {
     campground.author = req.user._id;
     campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     await campground.save();
-    console.log(campground);
     req.flash('success', 'Successfully created a new campground'); //store a flash message if success
     res.redirect(`/campgrounds/${campground._id}`)
 };
-
+ 
 
 
 // ***********************************************
@@ -67,9 +65,8 @@ module.exports.showCampground = async (req, res) => {
         path: 'reviews',
         populate: {
             path: 'author'
-        }
-    }).populate('author');
-    // console.log(campground);
+        },
+    }).populate('author').populate('rooms');
     if (!campground) {
         req.flash('error', 'Cannot find that campground');
         return res.redirect('/campgrounds');
@@ -118,3 +115,4 @@ module.exports.deleteCampground = async (req, res) => {
     req.flash('success', 'Successfully deleted campground')
     res.redirect('/campgrounds');
 };
+
